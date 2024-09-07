@@ -1,0 +1,107 @@
+[
+    {
+      "name": "Wolf",
+      "weight": 50,
+      "maxCount": 30,
+      "speed": 3,
+      "food": 8
+    },
+    {
+      "name": "Boa",
+      "weight": 15,
+      "maxCount": 30,
+      "speed": 1,
+      "food": 3
+    },
+    {
+      "name": "Fox",
+      "weight": 8,
+      "maxCount": 30,
+      "speed": 2,
+      "food": 2
+    },
+    {
+      "name": "Bear",
+      "weight": 500,
+      "maxCount": 5,
+      "speed": 2,
+      "food": 80
+    },
+    {
+      "name": "Eagle",
+      "weight": 6,
+      "maxCount": 20,
+      "speed": 3,
+      "food": 1
+    },
+    {
+      "name": "Horse",
+      "weight": 400,
+      "maxCount": 20,
+      "speed": 4,
+      "food": 60
+    },
+    {
+      "name": "Deer",
+      "weight": 300,
+      "maxCount": 20,
+      "speed": 4,
+      "food": 50
+    },
+    {
+      "name": "Rabbit",
+      "weight": 2,
+      "maxCount": 150,
+      "speed": 2,
+      "food": 0.45
+    },
+    {
+      "name": "Mouse",
+      "weight": 0.05,
+      "maxCount": 500,
+      "speed": 1,
+      "food": 0.01
+    },
+    {
+      "name": "Goat",
+      "weight": 60,
+      "maxCount": 140,
+      "speed": 3,
+      "food": 10
+    },
+    {
+      "name": "Sheep",
+      "weight": 70,
+      "maxCount": 140,
+      "speed": 3,
+      "food": 15
+    },
+    {
+      "name": "Boar",
+      "weight": 400,
+      "maxCount": 50,
+      "speed": 2,
+      "food": 50
+    },
+    {
+      "name": "Buffalo",
+      "weight": 700,
+      "maxCount": 10,
+      "speed": 3,
+      "food": 100
+    },
+    {
+      "name": "Duck",
+      "weight": 1,
+      "maxCount": 200,
+      "speed": 4,
+      "food": 0.15
+    },
+    {
+      "name": "Caterpillar",
+      "weight": 0.01,
+      "maxCount": 1000,
+      "speed": 0,
+      "food": 0
+    }
+  ]
