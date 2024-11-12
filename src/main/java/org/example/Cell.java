@@ -2,6 +2,7 @@ package org.example.animals;
 
 
 import lombok.Data;
+import lombok.ToString;
 import org.example.Constants;
 import org.example.animals.Animal;
 import javax.swing.*;
@@ -14,6 +15,15 @@ public class Cell {
     List<Animal> syncListAnimals = Collections.synchronizedList(new ArrayList<Animal>(Constants.animalsCount/2));
     List<Herbivore> syncList = Collections.synchronizedList(new ArrayList<Herbivore>(Constants.animalsCount/2));
     List<Grass> grasses = new ArrayList<>(); // Добавлен список для травы
+
+    @Override
+    public String toString() {
+        return "Cell{" +
+                "syncListAnimals=" + syncListAnimals.size() +
+                ", syncList=" + syncList.size() +
+                ", grasses=" + grasses.size() +
+                '}';
+    }
 
     public void addAnimal(Animal animal) {
         synchronized (syncListAnimals) {

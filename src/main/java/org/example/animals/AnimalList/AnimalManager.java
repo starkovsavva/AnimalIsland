@@ -1,5 +1,5 @@
 package org.example.animals.AnimalList;
-
+import org.apache.log4j.*;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.example.Constants;
@@ -18,6 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Data
 public class AnimalManager {
 
+    public static final Logger log  = LogManager.getLogger(AnimalManager.class);
     public static List<Map.Entry<Animal, HashMap<Animal, Integer>>> animalTable;
     public static List<Animal> animals;
     private static List<Grass> grasses = new ArrayList<Grass>(Constants.grassCount);
@@ -37,7 +38,15 @@ public class AnimalManager {
         init();
     }
 
+    public void logGrid(Cell[][] grid){
+        for (int i = 0; i < Constants.gridX; i++) {
+            for (int j = 0; j < Constants.gridY; j++){
+                System.out.println(grid[i][j]);
+            }
+        }
+    }
     public void init(){
+        initializeFreeCells(grid);
         spawnGrasses(grid);
         spawnAnimals(grid);
     }
@@ -53,7 +62,7 @@ public class AnimalManager {
                 int spawnCount = random.nextInt(maxCount + 1);
 
                 for (int i = 0; i < spawnCount; i++) {
-                    Cell randomCell = findRandomFreeCell(grid, random);
+                    Cell randomCell = getRandomFreeCell(grid,random);
                     if (randomCell != null) {
                         // Проверяем, к какому типу относится животное
                         if (prey instanceof Herbivore) {
@@ -65,36 +74,69 @@ public class AnimalManager {
                 }
             }
         }
+
     }
 
     public void spawnGrasses(Cell[][] grid) {
         // Используем ThreadLocalRandom для генерации случайных чисел
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int i = 0; i < Constants.MAX_GRASS_SPAWN; i++) {
-            Cell randomCell = findRandomFreeCell(grid, random);
+
+            Cell randomCell = getRandomFreeCell(grid, random);
             if (randomCell != null) {
                 randomCell.addGrass(new Grass());
             }
         }
     }
-    private Cell findRandomFreeCell(Cell[][] grid, ThreadLocalRandom random) {
+//    private Cell findRandomFreeCell(Cell[][] grid, ThreadLocalRandom random) {
+//        int rows = grid.length;
+//        int cols = grid[0].length;
+//        List<Cell> freeCells = new ArrayList<>();
+//        for (int row = 0; row < rows; row++) {
+//            for (int col = 0; col < cols; col++) {
+//                if (grid[row][col] == null) {
+//                    grid[row][col] = new Cell();
+//                    freeCells.add(grid[row][col]);
+//                    return grid[row][col];
+//                }
+//
+//            }
+//        }
+//        if (freeCells.isEmpty()) {
+//            return null;
+//        }
+//        return freeCells.get(random.nextInt(freeCells.size()));
+//    }
+
+    private void initializeFreeCells(Cell[][] grid) {
         int rows = grid.length;
         int cols = grid[0].length;
-        List<Cell> freeCells = new ArrayList<>();
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                if (grid[row][col]==null) {
+                if (grid[row][col] == null) {
                     grid[row][col] = new Cell();
+                }
+            }
+        }
+    }
+    private Cell getRandomFreeCell(Cell[][] grid, ThreadLocalRandom random) {
+        List<Cell> freeCells = new ArrayList<>();
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (grid[row][col] != null) {
                     freeCells.add(grid[row][col]);
                 }
             }
         }
+
         if (freeCells.isEmpty()) {
             return null;
         }
         return freeCells.get(random.nextInt(freeCells.size()));
     }
-
 
     public void drawField(Cell[][] grid) {
         for (int row = 0; row < Constants.gridY; row++) {
@@ -115,30 +157,31 @@ public class AnimalManager {
         // Используем synchronizedList для списка животных в каждой клетке
         for (int row = 0; row < Constants.gridX; row++) {
             for (int col = 0; col < Constants.gridY; col++) {
-                // Обрабатываем Herbivore
-
-                for (Herbivore herbivore : grid[row][col].getSyncList()) {
+                // Собираем копию списка Herbivore перед началом итерации
+                List<Herbivore> herbivoresToProcess = new ArrayList<>(grid[row][col].getSyncList());
+                for (Herbivore herbivore : herbivoresToProcess) {
                     if (herbivore.isAlive()) {
                         if (herbivore.getFood() > 0) {
                             eatGrass(herbivore, grid[row][col]);
                         }
                         moveAnimal(herbivore, grid, row, col);
-                        breedAnimal(herbivore, grid, row, col);
                     }
                 }
-                // Обрабатываем остальные животных (Predator)
-                for (Animal animal : grid[row][col].getSyncListAnimals()) {
+
+                // Собираем копию списка Animal перед началом итерации
+                List<Animal> animalsToProcess = new ArrayList<>(grid[row][col].getSyncListAnimals());
+                for (Animal animal : animalsToProcess) {
                     if (animal.isAlive()) {
                         if (animal.getFood() > 0) {
                             eatAnimal(animal, grid[row][col]);
                         }
                         moveAnimal(animal, grid, row, col);
-                        breedAnimal(animal, grid, row, col);
                     }
                 }
             }
         }
     }
+
 
     private void eatGrass(Herbivore herbivore, Cell cell) {
         synchronized (cell.getGrasses()) {
@@ -226,7 +269,8 @@ public class AnimalManager {
         // Используем ThreadLocalRandom для генерации случайного числа
         ThreadLocalRandom random = ThreadLocalRandom.current();
         if (random.nextDouble() < 0.5 && animal.getFood() < 0) {
-            Cell randomCell = findRandomFreeCell(grid, random);
+
+            Cell randomCell = getRandomFreeCell(grid,random);
             if (randomCell != null) {
                 // Создаем новое животное
                 Animal newAnimal = new Animal(animal.getId(), animal.getWeight(), animal.getMaxCount(), animal.getSpeed(), animal.getFood());

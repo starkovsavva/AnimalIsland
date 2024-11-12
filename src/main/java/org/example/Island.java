@@ -10,15 +10,15 @@ public class Island {
     public AnimalManager manager = new AnimalManager();
     public void IslandInitialize() throws InterruptedException {
 
-        // Создаем ThreadPool
-        ExecutorService executor = Executors.newFixedThreadPool(10); // потоки
 
-        // Запускаем 10 ходов симуляции в разных потоках
+        ExecutorService executor = Executors.newFixedThreadPool(1); // потоки
+
+
         for (int i = 0; i < 10; i++) {
-            final int currentI = i; // Сохраняем значение i в final переменную
+            final int currentI = i;
             Future<?> future = executor.submit(() -> {
                 manager.simulateTurn();
-                System.out.println("Ход " + (currentI + 1) + ":"); // Используем currentI
+                System.out.println("Ход " + (currentI + 1) + ":");
                 manager.drawField(manager.getGrid());
                 System.out.println();
 
@@ -31,13 +31,12 @@ public class Island {
             }
 
         };
-        executor.awaitTermination(1, TimeUnit.HOURS); // Задаем время ожидания
+        executor.awaitTermination(1, TimeUnit.HOURS); //ждем
         executor.shutdown();
 
 
     }
 
-    // Ожидаем завершения всех задач
 
 
 }
